@@ -111,6 +111,7 @@ export default function CoordinateMap({ latitude, longitude }: CoordinateMapProp
         }`}
       >
         Developed by Yusuf Mohammednur
+       Sponsored by Hibret Bank S.C.
       </div>
     </div>
   )
