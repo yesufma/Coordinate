@@ -513,37 +513,11 @@ export default function CoordinateConverterApp() {
 
       <footer className="mt-8 text-center text-sm text-amber-100">
         <div
-          className={`mb-4 inline-block px-3 py-1 rounded-md text-sm transition-opacity duration-500 ${
+          className={`mb-4 inline-block bg-black bg-opacity-50 text-white px-3 py-1 rounded-md text-sm transition-opacity duration-500 ${
             showCredit ? "opacity-100" : "opacity-0"
           }`}
         >
-          <svg width="300" height="40" className="mx-auto">
-            <defs>
-              <filter id="glitch">
-                <feTurbulence type="fractalNoise" baseFrequency="0.01 0.02" numOctaves="1" result="noise" />
-                <feDisplacementMap
-                  in="SourceGraphic"
-                  in2="noise"
-                  scale="5"
-                  xChannelSelector="R"
-                  yChannelSelector="G"
-                  result="glitch1"
-                />
-                <feDisplacementMap
-                  in="SourceGraphic"
-                  in2="noise"
-                  scale="-5"
-                  xChannelSelector="B"
-                  yChannelSelector="A"
-                  result="glitch2"
-                />
-                <feBlend in="glitch1" in2="glitch2" mode="screen" result="blend" />
-              </filter>
-            </defs>
-            <text x="150" y="25" textAnchor="middle" className="text-xl font-bold fill-white filter glitch-text">
-              Developed by Yusuf Mohammednur
-            </text>
-          </svg>
+          Developed by Yusuf Mohammednur
         </div>
         <p>Geographic Coordinate Converter - WGS 84 and Adindan Datums</p>
         <p className="mt-1">Supports Decimal Degrees, DMS, and UTM formats</p>
@@ -565,41 +539,8 @@ export default function CoordinateConverterApp() {
           background-size: 200% 200%;
           animation: gradientAnimation 15s ease infinite;
         }
-
-        @keyframes glitchAnimation {
-          0% {
-            filter: url(#glitch) brightness(1) contrast(1);
-            opacity: 0;
-          }
-          20% {
-            filter: url(#glitch) brightness(1.1) contrast(1.2);
-            opacity: 0.2;
-          }
-          40% {
-            filter: url(#glitch) brightness(1.2) contrast(1.3);
-            opacity: 0.4;
-          }
-          60% {
-            filter: url(#glitch) brightness(1.3) contrast(1.4);
-            opacity: 0.6;
-          }
-          80% {
-            filter: url(#glitch) brightness(1.4) contrast(1.5);
-            opacity: 0.8;
-          }
-          100% {
-            filter: url(#glitch) brightness(1.5) contrast(1.6);
-            opacity: 1;
-          }
-        }
-
-        .glitch-text {
-          animation: glitchAnimation 2s forwards;
-        }
       `}</style>
     </div>
   )
 }
-
-
 
