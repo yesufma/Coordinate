@@ -7,9 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
 import { ArrowDownUp, Copy, MapPin, RotateCcw } from "lucide-react"
-import CoordinateMap from "@/components/coordinate-map"
 import { convertCoordinates } from "@/lib/coordinate-converter"
 
 export default function CoordinateConverterApp() {
@@ -158,6 +156,11 @@ export default function CoordinateConverterApp() {
 
   // Add this console log
   console.log("Current map coordinates:", mapCoordinates)
+
+  // New function to generate Google Maps URL
+  const generateGoogleMapsUrl = (latitude, longitude) => {
+    return `https://www.google.com/maps?q=${latitude},${longitude}`
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-teal-800 via-teal-600 to-amber-300 p-4">
@@ -493,23 +496,23 @@ export default function CoordinateConverterApp() {
                 </div>
               )}
 
-              <div className="flex items-center space-x-2 mt-4">
-                <Switch id="show-map" checked={showMap} onCheckedChange={setShowMap} />
-                <Label htmlFor="show-map" className="flex items-center cursor-pointer">
-                  <MapPin className="h-4 w-4 mr-1" />
-                  Show on map
-                </Label>
-              </div>
+              {results.decimal && (
+                <div className="flex items-center space-x-2 mt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      window.open(generateGoogleMapsUrl(results.decimal.latitude, results.decimal.longitude), "_blank")
+                    }
+                  >
+                    <MapPin className="h-4 w-4 mr-2" />
+                    View on Google Maps
+                  </Button>
+                </div>
+              )}
             </div>
           </CardFooter>
         )}
       </Card>
-
-      {showMap && results && (
-        <div className="mt-6 w-full max-w-xl mx-auto h-[300px] sm:h-[400px] rounded-lg overflow-hidden border shadow-md">
-          <CoordinateMap latitude={mapCoordinates.latitude} longitude={mapCoordinates.longitude} />
-        </div>
-      )}
 
       <footer className="mt-8 text-center text-sm text-amber-100">
         <div
