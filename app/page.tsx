@@ -160,10 +160,10 @@ export default function CoordinateConverterApp() {
   console.log("Current map coordinates:", mapCoordinates)
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 p-4">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-teal-800 via-teal-600 to-amber-300 p-4">
       <header className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Coordinate Converter</h1>
-        <p className="text-gray-500">Convert between WGS 84 and Adindan datums</p>
+        <h1 className="text-3xl font-bold text-white shadow-sm">Coordinate Converter</h1>
+        <p className="text-amber-100">Convert between WGS 84 and Adindan datums</p>
       </header>
 
       <Card className="w-full max-w-xl mx-auto shadow-md">
@@ -511,7 +511,7 @@ export default function CoordinateConverterApp() {
         </div>
       )}
 
-      <footer className="mt-8 text-center text-sm text-gray-500">
+      <footer className="mt-8 text-center text-sm text-amber-100">
         <div
           className={`mb-4 inline-block bg-black bg-opacity-50 text-white px-3 py-1 rounded-md text-sm transition-opacity duration-500 ${
             showCredit ? "opacity-100" : "opacity-0"
@@ -522,6 +522,24 @@ export default function CoordinateConverterApp() {
         <p>Geographic Coordinate Converter - WGS 84 and Adindan Datums</p>
         <p className="mt-1">Supports Decimal Degrees, DMS, and UTM formats</p>
       </footer>
+      <style jsx>{`
+        @keyframes gradientAnimation {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+        
+        .bg-gradient-to-br {
+          background-size: 200% 200%;
+          animation: gradientAnimation 15s ease infinite;
+        }
+      `}</style>
     </div>
   )
 }
