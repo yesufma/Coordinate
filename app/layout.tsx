@@ -3,7 +3,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Coordinate-Converter',
-  description: 'A professional application developed by Yusuf Mohammednur, designed for hassle-free coordinate conversion and easy location finding.',
+  description: 'Designed for hassle-free coordinate conversion and easy location finding.',
   
 }
 
