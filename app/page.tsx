@@ -531,14 +531,14 @@ export default function CoordinateConverterApp() {
             Geospatial Engineering Solutions
           </div>
           <div className="text-xs text-amber-100">
-            Developed by <span className="font-semibold text-amber-200">Yusuf Mohammednur</span>
+            Developed by <span className="font-semibold text-amber-200">Eng. Yusuf Mohammednur</span>
           </div>
         </div>
 
         <div className="text-amber-100 text-sm space-y-1">
           <p>Advanced Coordinate Transformation System</p>
           <p className="text-xs text-amber-200/90">
-            Support development via Telebirr: 
+            Support our cause via Telebirr: 
             <span className="font-mono bg-black/25 px-2 py-1 rounded-md ml-1">
               0913-373481
             </span>
