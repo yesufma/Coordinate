@@ -136,13 +136,13 @@ export default function CoordinateConverterApp() {
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-teal-800 via-teal-600 to-amber-300 p-4">
       <header className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-white mb-2 drop-shadow-lg">Professional Coordinate Converter</h1>
-        <p className="text-amber-100 text-lg">Transform between WGS84 and Adindan datums with military precision</p>
+        <h1 className="text-4xl font-bold text-white mb-2 drop-shadow-lg">Coordinate Converter</h1>
+        <p className="text-amber-100 text-lg">Convert between WGS84 and Adindan datums</p>
       </header>
 
       <Card className="w-full max-w-2xl mx-auto shadow-2xl">
         <CardHeader>
-          <CardTitle className="text-2xl">Geospatial Transformation Suite</CardTitle>
+          <CardTitle className="text-2xl">Coordinate Input</CardTitle>
           <CardDescription>Select input format and coordinate systems</CardDescription>
         </CardHeader>
 
@@ -201,7 +201,7 @@ export default function CoordinateConverterApp() {
                 <Input
                   type="number"
                   step="0.000001"
-                  placeholder="38.8951"
+                  placeholder="9.0125"
                   value={decimalDegrees.latitude}
                   onChange={(e) => setDecimalDegrees({ ...decimalDegrees, latitude: e.target.value })}
                   className="h-12 text-base"
@@ -212,7 +212,7 @@ export default function CoordinateConverterApp() {
                 <Input
                   type="number"
                   step="0.000001"
-                  placeholder="-77.0364"
+                  placeholder="38.0364"
                   value={decimalDegrees.longitude}
                   onChange={(e) => setDecimalDegrees({ ...decimalDegrees, longitude: e.target.value })}
                   className="h-12 text-base"
@@ -325,7 +325,7 @@ export default function CoordinateConverterApp() {
                   className="gap-2 hover:bg-amber-50/20"
                 >
                   <RotateCcw className="h-4 w-4" />
-                  Reset Fields
+                  Reset
                 </Button>
                 <Button 
                   onClick={() => handleConvert("dms")}
