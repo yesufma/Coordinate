@@ -11,7 +11,7 @@ import { ArrowDownUp, Copy, MapPin, RotateCcw } from "lucide-react"
 import { convertCoordinates } from "@/lib/coordinate-converter"
 
 export default function CoordinateConverterApp() {
-  // State management (unchanged)
+  // State management
   const [decimalDegrees, setDecimalDegrees] = useState({ latitude: "", longitude: "" })
   const [dms, setDms] = useState({
     latDegrees: "",
@@ -36,7 +36,104 @@ export default function CoordinateConverterApp() {
     return () => clearTimeout(timer)
   }, [])
 
-  // Conversion handler and utility functions (unchanged)
+  // Conversion handler
+  const handleConvert = (format) => {
+    let convertedCoordinates
+    try {
+      switch (format) {
+        case "decimal":
+          convertedCoordinates = convertCoordinates({
+            type: "decimal",
+            datum: sourceDatum,
+            targetDatum: targetDatum,
+            latitude: parseFloat(decimalDegrees.latitude),
+            longitude: parseFloat(decimalDegrees.longitude),
+          })
+          break
+        case "dms":
+          convertedCoordinates = convertCoordinates({
+            type: "dms",
+            datum: sourceDatum,
+            targetDatum: targetDatum,
+            latDegrees: parseInt(dms.latDegrees),
+            latMinutes: parseInt(dms.latMinutes),
+            latSeconds: parseFloat(dms.latSeconds),
+            latDirection: dms.latDirection,
+            longDegrees: parseInt(dms.longDegrees),
+            longMinutes: parseInt(dms.longMinutes),
+            longSeconds: parseFloat(dms.longSeconds),
+            longDirection: dms.longDirection,
+          })
+          break
+        case "utm":
+          convertedCoordinates = convertCoordinates({
+            type: "utm",
+            datum: sourceDatum,
+            targetDatum: targetDatum,
+            easting: parseFloat(utm.easting),
+            northing: parseFloat(utm.northing),
+            zone: parseInt(utm.zone),
+            hemisphere: utm.hemisphere,
+          })
+          break
+      }
+
+      setResults(convertedCoordinates)
+      if (convertedCoordinates?.decimal) {
+        setMapCoordinates({
+          latitude: convertedCoordinates.decimal.latitude,
+          longitude: convertedCoordinates.decimal.longitude
+        })
+      }
+    } catch (error) {
+      console.error("Conversion error:", error)
+    }
+  }
+
+  // Utility functions
+  const swapDatums = () => {
+    const temp = sourceDatum
+    setSourceDatum(targetDatum)
+    setTargetDatum(temp)
+  }
+
+  const resetInputs = (format) => {
+    switch (format) {
+      case "decimal":
+        setDecimalDegrees({ latitude: "", longitude: "" })
+        break
+      case "dms":
+        setDms({
+          latDegrees: "",
+          latMinutes: "",
+          latSeconds: "",
+          latDirection: "N",
+          longDegrees: "",
+          longMinutes: "",
+          longSeconds: "",
+          longDirection: "E",
+        })
+        break
+      case "utm":
+        setUtm({ easting: "", northing: "", zone: "37", hemisphere: "N" })
+        break
+    }
+    setResults(null)
+  }
+
+  const copyToClipboard = (text) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(
+        () => {
+          setCopyFeedback(true)
+          setTimeout(() => setCopyFeedback(false), 2000)
+        },
+        (err) => console.error("Copy failed:", err)
+      )
+    }
+  }
+
+  const generateGoogleMapsUrl = (lat, lng) => `https://www.google.com/maps?q=${lat},${lng}`
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-teal-800 via-teal-600 to-amber-300 p-4 sm:p-6">
@@ -92,7 +189,7 @@ export default function CoordinateConverterApp() {
           </div>
 
           {/* Input Tabs */}
-          <Tabs defaultValue="decimal">
+          <Tabs defaultValue="decimal" className="w-full">
             <TabsList className="grid grid-cols-3 mb-4 w-full h-10 sm:h-12 bg-teal-50">
               <TabsTrigger value="decimal" className="text-xs sm:text-sm">Decimal°</TabsTrigger>
               <TabsTrigger value="dms" className="text-xs sm:text-sm">DMS</TabsTrigger>
@@ -322,7 +419,6 @@ export default function CoordinateConverterApp() {
             <div className="w-full space-y-3 sm:space-y-4">
               <h3 className="text-lg sm:text-xl font-semibold">Conversion Results ({targetDatum})</h3>
 
-              {/* Results sections with responsive text */}
               {results.decimal && (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -349,7 +445,64 @@ export default function CoordinateConverterApp() {
                 </div>
               )}
 
-              {/* Other result sections with similar responsive adjustments */}
+              {results.dms && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm sm:text-base font-medium">Degrees Minutes Seconds:</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyToClipboard(
+                        `${results.dms.latDegrees}°${results.dms.latMinutes}'${results.dms.latSeconds.toFixed(3)}"${results.dms.latDirection} ` +
+                        `${results.dms.longDegrees}°${results.dms.longMinutes}'${results.dms.longSeconds.toFixed(3)}"${results.dms.longDirection}`
+                      )}
+                      className="text-sm"
+                    >
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy
+                    </Button>
+                  </div>
+                  <div className="bg-teal-50/30 p-3 rounded-lg">
+                    <code className="font-mono text-xs sm:text-sm">
+                      {results.dms.latDegrees}°{results.dms.latMinutes}'{results.dms.latSeconds.toFixed(3)}"
+                      {results.dms.latDirection}
+                      <br />
+                      {results.dms.longDegrees}°{results.dms.longMinutes}'{results.dms.longSeconds.toFixed(3)}"
+                      {results.dms.longDirection}
+                    </code>
+                  </div>
+                </div>
+              )}
+
+              {results.utm && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm sm:text-base font-medium">UTM Coordinates:</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyToClipboard(
+                        `${results.utm.zone}${results.utm.hemisphere} ` +
+                        `${results.utm.easting.toFixed(2)}E ` +
+                        `${results.utm.northing.toFixed(2)}N`
+                      )}
+                      className="text-sm"
+                    >
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy
+                    </Button>
+                  </div>
+                  <div className="bg-teal-50/30 p-3 rounded-lg">
+                    <code className="font-mono text-xs sm:text-sm">
+                      Zone {results.utm.zone}{results.utm.hemisphere}
+                      <br />
+                      Easting: {results.utm.easting.toFixed(2)} m
+                      <br />
+                      Northing: {results.utm.northing.toFixed(2)} m
+                    </code>
+                  </div>
+                </div>
+              )}
 
               {results.decimal && (
                 <div className="mt-4">
@@ -371,7 +524,7 @@ export default function CoordinateConverterApp() {
         )}
       </Card>
 
-      {/* Footer with responsive text */}
+      {/* Footer */}
       <footer className="mt-8 sm:mt-12 text-center space-y-3 sm:space-y-4">
         <div className={`inline-block bg-black/50 backdrop-blur-lg text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl 
           transition-all duration-700 ease-out transform text-sm sm:text-base ${
@@ -397,14 +550,12 @@ export default function CoordinateConverterApp() {
         </div>
       </footer>
 
-      {/* Clipboard Feedback positioning */}
-      {copyFeedback && (
+      {/* Clipboard Feedback */}
+      {typeof window !== 'undefined' && copyFeedback && (
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-teal-600 text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in text-sm sm:text-base">
           Copied to clipboard!
         </div>
       )}
-
-      {/* Global styles remain unchanged */}
     </div>
   )
 }
