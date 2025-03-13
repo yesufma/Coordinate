@@ -538,7 +538,7 @@ export default function CoordinateConverterApp() {
         <div className="text-amber-100 text-sm space-y-1">
           <p>Advanced Coordinate Transformation System</p>
           <p className="text-xs text-amber-200/90">
-            Support our cause via Telebirr: 
+            Support our cause! Contribute via Telebirr: 
             <span className="font-mono bg-black/25 px-2 py-1 rounded-md ml-1">
               0913-373481
             </span>
