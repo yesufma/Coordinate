@@ -535,7 +535,7 @@ export default function CoordinateConverterApp() {
             Geospatial Engineering Solutions
           </div>
           <div className="text-xs text-amber-100">
-            Developed by <span className="font-semibold text-amber-200">Yusuf Mohammednur</span>
+            Developed by <span className="font-semibold text-amber-200">Eng. Yusuf Mohammednur</span>
           </div>
         </div>
 
