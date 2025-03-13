@@ -203,7 +203,7 @@ export default function CoordinateConverterApp() {
                 <Input
                   type="number"
                   step="0.000001"
-                  placeholder="38.8951"
+                  placeholder="9.0546"
                   value={decimalDegrees.latitude}
                   onChange={(e) => setDecimalDegrees({ ...decimalDegrees, latitude: e.target.value })}
                   className="h-10 sm:h-12 text-sm sm:text-base"
@@ -214,7 +214,7 @@ export default function CoordinateConverterApp() {
                 <Input
                   type="number"
                   step="0.000001"
-                  placeholder="-77.0364"
+                  placeholder="38.0364"
                   value={decimalDegrees.longitude}
                   onChange={(e) => setDecimalDegrees({ ...decimalDegrees, longitude: e.target.value })}
                   className="h-10 sm:h-12 text-sm sm:text-base"
@@ -346,7 +346,7 @@ export default function CoordinateConverterApp() {
                 <Label className="text-sm sm:text-base">Easting</Label>
                 <Input
                   type="number"
-                  placeholder="500000"
+                  placeholder="470011"
                   value={utm.easting}
                   onChange={(e) => setUtm({ ...utm, easting: e.target.value })}
                   className="h-10 sm:h-12 text-sm sm:text-base"
@@ -356,7 +356,7 @@ export default function CoordinateConverterApp() {
                 <Label className="text-sm sm:text-base">Northing</Label>
                 <Input
                   type="number"
-                  placeholder="4000000"
+                  placeholder="980044"
                   value={utm.northing}
                   onChange={(e) => setUtm({ ...utm, northing: e.target.value })}
                   className="h-10 sm:h-12 text-sm sm:text-base"
@@ -400,7 +400,7 @@ export default function CoordinateConverterApp() {
                   className="w-full sm:w-auto gap-2 hover:bg-amber-50/20"
                 >
                   <RotateCcw className="h-4 w-4" />
-                  <span className="text-sm">Reset Fields</span>
+                  <span className="text-sm">Reset </span>
                 </Button>
                 <Button 
                   onClick={() => handleConvert("utm")}
