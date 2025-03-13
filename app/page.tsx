@@ -37,8 +37,8 @@ export default function CoordinateConverterApp() {
 
   // Conversion handler
   const handleConvert = (format) => {
+    let convertedCoordinates
     try {
-      let convertedCoordinates
       switch (format) {
         case "decimal":
           convertedCoordinates = convertCoordinates({
@@ -76,6 +76,7 @@ export default function CoordinateConverterApp() {
           })
           break
       }
+
       setResults(convertedCoordinates)
     } catch (error) {
       console.error("Conversion error:", error)
@@ -127,24 +128,24 @@ export default function CoordinateConverterApp() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-teal-800 via-teal-600 to-amber-300 p-4">
-      <header className="text-center mb-6">
-        <h1 className="text-3xl font-bold text-white">Coordinate Converter</h1>
-        <p className="text-amber-100">Convert between WGS 84 and Adindan datums</p>
+      <header className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-white mb-2">Coordinate Converter</h1>
+        <p className="text-amber-100 text-lg">Convert between WGS84 and Adindan datums</p>
       </header>
 
-      <Card className="w-full max-w-xl mx-auto shadow-md">
+      <Card className="w-full max-w-2xl mx-auto shadow-lg">
         <CardHeader>
-          <CardTitle>Coordinate Input</CardTitle>
-          <CardDescription>Select input format and datum</CardDescription>
+          <CardTitle className="text-2xl">Coordinate Transformation</CardTitle>
+          <CardDescription>Select input format and coordinate systems</CardDescription>
         </CardHeader>
 
         <CardContent>
-          <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
             <div className="w-full sm:w-auto space-y-1">
-              <Label htmlFor="source-datum">Source Datum</Label>
+              <Label>Source Datum</Label>
               <Select value={sourceDatum} onValueChange={setSourceDatum}>
-                <SelectTrigger id="source-datum" className="w-full sm:w-[130px]">
-                  <SelectValue placeholder="Select datum" />
+                <SelectTrigger className="w-full sm:w-[160px]">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="WGS84">WGS 84</SelectItem>
@@ -153,15 +154,21 @@ export default function CoordinateConverterApp() {
               </Select>
             </div>
 
-            <Button variant="outline" size="icon" onClick={swapDatums} className="mx-2 mt-6" aria-label="Swap datums">
-              <ArrowDownUp className="h-4 w-4" />
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={swapDatums}
+              className="mx-2 mt-6"
+              aria-label="Swap datums"
+            >
+              <ArrowDownUp className="h-5 w-5" />
             </Button>
 
             <div className="w-full sm:w-auto space-y-1">
-              <Label htmlFor="target-datum">Target Datum</Label>
+              <Label>Target Datum</Label>
               <Select value={targetDatum} onValueChange={setTargetDatum}>
-                <SelectTrigger id="target-datum" className="w-full sm:w-[130px]">
-                  <SelectValue placeholder="Select datum" />
+                <SelectTrigger className="w-full sm:w-[160px]">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="WGS84">WGS 84</SelectItem>
@@ -172,63 +179,68 @@ export default function CoordinateConverterApp() {
           </div>
 
           <Tabs defaultValue="decimal" className="w-full">
-            <TabsList className="grid grid-cols-3 mb-4 w-full">
+            <TabsList className="grid grid-cols-3 mb-6 w-full">
               <TabsTrigger value="decimal">Decimal</TabsTrigger>
               <TabsTrigger value="dms">DMS</TabsTrigger>
               <TabsTrigger value="utm">UTM</TabsTrigger>
             </TabsList>
 
-            {/* Decimal Degrees Input */}
-            <TabsContent value="decimal" className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="decimal-lat">Latitude</Label>
+            {/* Decimal Input */}
+            <TabsContent value="decimal" className="space-y-6">
+              <div className="space-y-3">
+                <Label className="text-base">Latitude</Label>
                 <Input
-                  id="decimal-lat"
                   type="number"
                   step="0.000001"
-                  placeholder="e.g. 37.7749"
+                  placeholder="38.8951"
                   value={decimalDegrees.latitude}
                   onChange={(e) => setDecimalDegrees({ ...decimalDegrees, latitude: e.target.value })}
+                  className="input-fix"
                 />
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="decimal-long">Longitude</Label>
+              <div className="space-y-3">
+                <Label className="text-base">Longitude</Label>
                 <Input
-                  id="decimal-long"
                   type="number"
                   step="0.000001"
-                  placeholder="e.g. -122.4194"
+                  placeholder="-77.0364"
                   value={decimalDegrees.longitude}
                   onChange={(e) => setDecimalDegrees({ ...decimalDegrees, longitude: e.target.value })}
+                  className="input-fix"
                 />
               </div>
-
               <div className="flex justify-between">
-                <Button variant="outline" onClick={() => resetInputs("decimal")}>
+                <Button 
+                  variant="outline" 
+                  onClick={() => resetInputs("decimal")}
+                >
                   <RotateCcw className="mr-2 h-4 w-4" />
                   Reset
                 </Button>
-                <Button onClick={() => handleConvert("decimal")}>Convert</Button>
+                <Button onClick={() => handleConvert("decimal")}>
+                  Convert
+                </Button>
               </div>
             </TabsContent>
 
-            {/* Degrees Minutes Seconds Input */}
-            <TabsContent value="dms" className="space-y-4">
-              <div className="space-y-2">
-                <Label>Latitude</Label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {/* DMS Input */}
+            <TabsContent value="dms" className="space-y-6">
+              <div className="space-y-3">
+                <Label className="text-base">Latitude</Label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <Input
                     type="number"
                     placeholder="Deg"
                     value={dms.latDegrees}
                     onChange={(e) => setDms({ ...dms, latDegrees: e.target.value })}
+                    className="input-fix"
                   />
                   <Input
                     type="number"
                     placeholder="Min"
                     value={dms.latMinutes}
                     onChange={(e) => setDms({ ...dms, latMinutes: e.target.value })}
+                    className="input-fix"
                   />
                   <Input
                     type="number"
@@ -236,8 +248,12 @@ export default function CoordinateConverterApp() {
                     placeholder="Sec"
                     value={dms.latSeconds}
                     onChange={(e) => setDms({ ...dms, latSeconds: e.target.value })}
+                    className="input-fix"
                   />
-                  <Select value={dms.latDirection} onValueChange={(value) => setDms({ ...dms, latDirection: value })}>
+                  <Select 
+                    value={dms.latDirection} 
+                    onValueChange={(v) => setDms({ ...dms, latDirection: v })}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -249,20 +265,22 @@ export default function CoordinateConverterApp() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label>Longitude</Label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="space-y-3">
+                <Label className="text-base">Longitude</Label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <Input
                     type="number"
                     placeholder="Deg"
                     value={dms.longDegrees}
                     onChange={(e) => setDms({ ...dms, longDegrees: e.target.value })}
+                    className="input-fix"
                   />
                   <Input
                     type="number"
                     placeholder="Min"
                     value={dms.longMinutes}
                     onChange={(e) => setDms({ ...dms, longMinutes: e.target.value })}
+                    className="input-fix"
                   />
                   <Input
                     type="number"
@@ -270,8 +288,12 @@ export default function CoordinateConverterApp() {
                     placeholder="Sec"
                     value={dms.longSeconds}
                     onChange={(e) => setDms({ ...dms, longSeconds: e.target.value })}
+                    className="input-fix"
                   />
-                  <Select value={dms.longDirection} onValueChange={(value) => setDms({ ...dms, longDirection: value })}>
+                  <Select 
+                    value={dms.longDirection} 
+                    onValueChange={(v) => setDms({ ...dms, longDirection: v })}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -284,62 +306,62 @@ export default function CoordinateConverterApp() {
               </div>
 
               <div className="flex justify-between">
-                <Button variant="outline" onClick={() => resetInputs("dms")}>
+                <Button 
+                  variant="outline" 
+                  onClick={() => resetInputs("dms")}
+                >
                   <RotateCcw className="mr-2 h-4 w-4" />
                   Reset
                 </Button>
-                <Button onClick={() => handleConvert("dms")}>Convert</Button>
+                <Button onClick={() => handleConvert("dms")}>
+                  Convert
+                </Button>
               </div>
             </TabsContent>
 
             {/* UTM Input */}
-            <TabsContent value="utm" className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="utm-easting">Easting</Label>
+            <TabsContent value="utm" className="space-y-6">
+              <div className="space-y-3">
+                <Label className="text-base">Easting</Label>
                 <Input
-                  id="utm-easting"
                   type="number"
-                  placeholder="e.g. 500000"
+                  placeholder="500000"
                   value={utm.easting}
                   onChange={(e) => setUtm({ ...utm, easting: e.target.value })}
+                  className="input-fix"
                 />
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="utm-northing">Northing</Label>
+              <div className="space-y-3">
+                <Label className="text-base">Northing</Label>
                 <Input
-                  id="utm-northing"
                   type="number"
-                  placeholder="e.g. 4000000"
+                  placeholder="4000000"
                   value={utm.northing}
                   onChange={(e) => setUtm({ ...utm, northing: e.target.value })}
+                  className="input-fix"
                 />
               </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="utm-zone">Zone</Label>
-                  <Select value={utm.zone} onValueChange={(value) => setUtm({ ...utm, zone: value })}>
-                    <SelectTrigger id="utm-zone">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Label className="text-base">Zone</Label>
+                  <Select value={utm.zone} onValueChange={(v) => setUtm({ ...utm, zone: v })}>
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="max-h-[200px] overflow-y-auto">
+                    <SelectContent className="max-h-[300px]">
                       <SelectItem value="37">37 (Default)</SelectItem>
                       {Array.from({ length: 60 }, (_, i) => i + 1)
-                        .filter((zone) => zone !== 37)
-                        .map((zone) => (
-                          <SelectItem key={zone} value={zone.toString()}>
-                            {zone}
-                          </SelectItem>
+                        .filter(zone => zone !== 37)
+                        .map(zone => (
+                          <SelectItem key={zone} value={zone.toString()}>{zone}</SelectItem>
                         ))}
                     </SelectContent>
                   </Select>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="utm-hemisphere">Hemisphere</Label>
-                  <Select value={utm.hemisphere} onValueChange={(value) => setUtm({ ...utm, hemisphere: value })}>
-                    <SelectTrigger id="utm-hemisphere">
+                <div className="space-y-3">
+                  <Label className="text-base">Hemisphere</Label>
+                  <Select value={utm.hemisphere} onValueChange={(v) => setUtm({ ...utm, hemisphere: v })}>
+                    <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -351,115 +373,139 @@ export default function CoordinateConverterApp() {
               </div>
 
               <div className="flex justify-between">
-                <Button variant="outline" onClick={() => resetInputs("utm")}>
+                <Button 
+                  variant="outline" 
+                  onClick={() => resetInputs("utm")}
+                >
                   <RotateCcw className="mr-2 h-4 w-4" />
                   Reset
                 </Button>
-                <Button onClick={() => handleConvert("utm")}>Convert</Button>
+                <Button onClick={() => handleConvert("utm")}>
+                  Convert
+                </Button>
               </div>
             </TabsContent>
           </Tabs>
         </CardContent>
 
+        {/* Results Display */}
         {results && (
-          <CardFooter className="flex flex-col">
-            <div className="w-full border-t pt-4">
-              <h3 className="font-medium mb-2">Conversion Results ({targetDatum})</h3>
+          <CardFooter className="flex flex-col border-t pt-6">
+            <div className="w-full space-y-4">
+              <h3 className="text-xl font-semibold mb-4">Conversion Results ({targetDatum})</h3>
 
               {results.decimal && (
-                <div className="mb-2">
-                  <p className="text-sm font-medium">Decimal Degrees:</p>
-                  <div className="flex justify-between items-center bg-gray-50 p-2 rounded">
-                    <p className="text-sm font-mono">
-                      Lat: {results.decimal.latitude.toFixed(6)}, Lon: {results.decimal.longitude.toFixed(6)}
-                    </p>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6"
-                      onClick={() =>
-                        copyToClipboard(
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">Decimal Degrees:</span>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyToClipboard(
                           `${results.decimal.latitude.toFixed(6)}, ${results.decimal.longitude.toFixed(6)}`,
                           "decimal"
-                        )
-                      }
-                    >
-                      <Copy className="h-3 w-3" />
-                    </Button>
+                        )}
+                      >
+                        <Copy className="h-4 w-4 mr-2" />
+                        Copy
+                      </Button>
+                      {copyFeedback.visible && copyFeedback.type === "decimal" && (
+                        <span className="text-xs text-green-500">Copied!</span>
+                      )}
+                    </div>
                   </div>
-                  {copyFeedback.visible && copyFeedback.type === "decimal" && (
-                    <p className="text-xs text-green-600 mt-1">Copied to clipboard!</p>
-                  )}
+                  <div className="bg-gray-100 p-3 rounded">
+                    <code className="font-mono text-sm">
+                      Lat: {results.decimal.latitude.toFixed(6)}
+                      <br />
+                      Lon: {results.decimal.longitude.toFixed(6)}
+                    </code>
+                  </div>
                 </div>
               )}
 
               {results.dms && (
-                <div className="mb-2">
-                  <p className="text-sm font-medium">Degrees Minutes Seconds:</p>
-                  <div className="flex justify-between items-center bg-gray-50 p-2 rounded">
-                    <p className="text-sm font-mono break-all">
-                      {results.dms.latDegrees}°{results.dms.latMinutes}'{results.dms.latSeconds.toFixed(3)}"
-                      {results.dms.latDirection} {results.dms.longDegrees}°{results.dms.longMinutes}'
-                      {results.dms.longSeconds.toFixed(3)}"{results.dms.longDirection}
-                    </p>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6 flex-shrink-0 ml-2"
-                      onClick={() =>
-                        copyToClipboard(
-                          `${results.dms.latDegrees}°${results.dms.latMinutes}'${results.dms.latSeconds.toFixed(3)}"${results.dms.latDirection} ${results.dms.longDegrees}°${results.dms.longMinutes}'${results.dms.longSeconds.toFixed(3)}"${results.dms.longDirection}`,
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">Degrees Minutes Seconds:</span>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyToClipboard(
+                          `${results.dms.latDegrees}°${results.dms.latMinutes}'${results.dms.latSeconds.toFixed(3)}"${results.dms.latDirection} ` +
+                          `${results.dms.longDegrees}°${results.dms.longMinutes}'${results.dms.longSeconds.toFixed(3)}"${results.dms.longDirection}`,
                           "dms"
-                        )
-                      }
-                    >
-                      <Copy className="h-3 w-3" />
-                    </Button>
+                        )}
+                      >
+                        <Copy className="h-4 w-4 mr-2" />
+                        Copy
+                      </Button>
+                      {copyFeedback.visible && copyFeedback.type === "dms" && (
+                        <span className="text-xs text-green-500">Copied!</span>
+                      )}
+                    </div>
                   </div>
-                  {copyFeedback.visible && copyFeedback.type === "dms" && (
-                    <p className="text-xs text-green-600 mt-1">Copied to clipboard!</p>
-                  )}
+                  <div className="bg-gray-100 p-3 rounded">
+                    <code className="font-mono text-sm">
+                      {results.dms.latDegrees}°{results.dms.latMinutes}'{results.dms.latSeconds.toFixed(3)}"
+                      {results.dms.latDirection}
+                      <br />
+                      {results.dms.longDegrees}°{results.dms.longMinutes}'{results.dms.longSeconds.toFixed(3)}"
+                      {results.dms.longDirection}
+                    </code>
+                  </div>
                 </div>
               )}
 
               {results.utm && (
-                <div className="mb-2">
-                  <p className="text-sm font-medium">UTM:</p>
-                  <div className="flex justify-between items-center bg-gray-50 p-2 rounded">
-                    <p className="text-sm font-mono">
-                      {results.utm.zone}
-                      {results.utm.hemisphere} {results.utm.easting.toFixed(2)}E {results.utm.northing.toFixed(2)}N
-                    </p>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6"
-                      onClick={() =>
-                        copyToClipboard(
-                          `${results.utm.zone}${results.utm.hemisphere} ${results.utm.easting.toFixed(2)}E ${results.utm.northing.toFixed(2)}N`,
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">UTM Coordinates:</span>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyToClipboard(
+                          `${results.utm.zone}${results.utm.hemisphere} ` +
+                          `${results.utm.easting.toFixed(2)}E ` +
+                          `${results.utm.northing.toFixed(2)}N`,
                           "utm"
-                        )
-                      }
-                    >
-                      <Copy className="h-3 w-3" />
-                    </Button>
+                        )}
+                      >
+                        <Copy className="h-4 w-4 mr-2" />
+                        Copy
+                      </Button>
+                      {copyFeedback.visible && copyFeedback.type === "utm" && (
+                        <span className="text-xs text-green-500">Copied!</span>
+                      )}
+                    </div>
                   </div>
-                  {copyFeedback.visible && copyFeedback.type === "utm" && (
-                    <p className="text-xs text-green-600 mt-1">Copied to clipboard!</p>
-                  )}
+                  <div className="bg-gray-100 p-3 rounded">
+                    <code className="font-mono text-sm">
+                      Zone {results.utm.zone}{results.utm.hemisphere}
+                      <br />
+                      Easting: {results.utm.easting.toFixed(2)} m
+                      <br />
+                      Northing: {results.utm.northing.toFixed(2)} m
+                    </code>
+                  </div>
                 </div>
               )}
 
               {results.decimal && (
-                <div className="flex items-center space-x-2 mt-4">
+                <div className="mt-6">
                   <Button
                     variant="outline"
-                    onClick={() =>
-                      window.open(generateGoogleMapsUrl(results.decimal.latitude, results.decimal.longitude), "_blank")
-                    }
+                    className="w-full"
+                    onClick={() => window.open(generateGoogleMapsUrl(
+                      results.decimal.latitude,
+                      results.decimal.longitude
+                    ), "_blank")}
                   >
-                    <MapPin className="h-4 w-4 mr-2" />
-                    View on Google Maps
+                    <MapPin className="h-5 w-5 mr-2" />
+                    View in Google Maps
                   </Button>
                 </div>
               )}
@@ -468,17 +514,47 @@ export default function CoordinateConverterApp() {
         )}
       </Card>
 
-      <footer className="mt-8 text-center text-sm text-amber-100">
-        <div
-          className={`mb-4 inline-block bg-black bg-opacity-50 text-white px-3 py-1 rounded-md text-sm transition-opacity duration-500 ${
-            showCredit ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          Developed by Yusuf Mohammednur
+      {/* Attribution Footer */}
+      <footer className="mt-12 text-center space-y-4">
+        <div className={`inline-block bg-black/50 text-white px-6 py-3 rounded-2xl transition-opacity duration-500 ${
+          showCredit ? "opacity-100" : "opacity-0"
+        }`}>
+          <div className="text-sm font-medium mb-1">
+            Developed by Yusuf Mohammednur
+          </div>
+          <div className="text-xs">
+            Support our cause! Contribute via Telebirr: 0913-373481
+          </div>
         </div>
-        <p>Geographic Coordinate Converter - WGS 84 and Adindan Datum</p>
-        <p className="mt-1">Support our cause! Contribute via Telebirr at 0913373481</p>
       </footer>
+
+      <style jsx global>{`
+        @keyframes gradientFlow {
+          0% { background-position: 0% 50% }
+          50% { background-position: 100% 50% }
+          100% { background-position: 0% 50% }
+        }
+        
+        .bg-gradient-to-br {
+          background-size: 200% 200%;
+          animation: gradientFlow 20s ease infinite;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
+
+        .input-fix:focus {
+          outline: none;
+          box-shadow: none;
+        }
+      `}</style>
     </div>
   )
 }
