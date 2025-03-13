@@ -522,7 +522,8 @@ export default function CoordinateConverterApp() {
         >
           Developed by Yusuf Mohammednur
         </div>
-        <p>Geographic Coordinate Converter - WGS 84 and Adindan Datums</p>
+        <p>Support our cause! Contribute via Telebirr at 0913373481.</p>
+         <p>Geographic Coordinate Converter - WGS 84 and Adindan Datum</p>
         <p className="mt-1">Supports Decimal Degrees, DMS, and UTM formats</p>
       </footer>
       <style jsx>{`
