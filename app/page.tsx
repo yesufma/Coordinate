@@ -27,7 +27,8 @@ export default function CoordinateConverterApp() {
   const [sourceDatum, setSourceDatum] = useState("WGS84")
   const [targetDatum, setTargetDatum] = useState("Adindan")
   const [results, setResults] = useState(null)
-  const [copyFeedback, setCopyFeedback] = useState({ visible: false, type: "" })
+  const [mapCoordinates, setMapCoordinates] = useState({ latitude: 0, longitude: 0 })
+  const [copyFeedback, setCopyFeedback] = useState(false)
   const [showCredit, setShowCredit] = useState(false)
 
   useEffect(() => {
@@ -78,6 +79,12 @@ export default function CoordinateConverterApp() {
       }
 
       setResults(convertedCoordinates)
+      if (convertedCoordinates?.decimal) {
+        setMapCoordinates({
+          latitude: convertedCoordinates.decimal.latitude,
+          longitude: convertedCoordinates.decimal.longitude
+        })
+      }
     } catch (error) {
       console.error("Conversion error:", error)
     }
@@ -114,11 +121,11 @@ export default function CoordinateConverterApp() {
     setResults(null)
   }
 
-  const copyToClipboard = (text, type) => {
+  const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text).then(
       () => {
-        setCopyFeedback({ visible: true, type })
-        setTimeout(() => setCopyFeedback({ visible: false, type: "" }), 2000)
+        setCopyFeedback(true)
+        setTimeout(() => setCopyFeedback(false), 2000)
       },
       (err) => console.error("Copy failed:", err)
     )
@@ -129,17 +136,18 @@ export default function CoordinateConverterApp() {
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-teal-800 via-teal-600 to-amber-300 p-4">
       <header className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-white mb-2">Coordinate Converter</h1>
-        <p className="text-amber-100 text-lg">Convert between WGS84 and Adindan datums</p>
+        <h1 className="text-4xl font-bold text-white mb-2 drop-shadow-lg">Coordinate Converter</h1>
+        <p className="text-amber-100 text-lg">Transform between WGS84 and Adindan datums</p>
       </header>
 
-      <Card className="w-full max-w-2xl mx-auto shadow-lg">
+      <Card className="w-full max-w-2xl mx-auto shadow-2xl">
         <CardHeader>
-          <CardTitle className="text-2xl">Coordinate Transformation</CardTitle>
+          <CardTitle className="text-2xl">Geospatial Transformation</CardTitle>
           <CardDescription>Select input format and coordinate systems</CardDescription>
         </CardHeader>
 
         <CardContent>
+          {/* Datum Selection */}
           <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
             <div className="w-full sm:w-auto space-y-1">
               <Label>Source Datum</Label>
@@ -158,7 +166,7 @@ export default function CoordinateConverterApp() {
               variant="outline" 
               size="icon" 
               onClick={swapDatums}
-              className="mx-2 mt-6"
+              className="mx-2 mt-6 hover:bg-teal-100/20"
               aria-label="Swap datums"
             >
               <ArrowDownUp className="h-5 w-5" />
@@ -178,9 +186,10 @@ export default function CoordinateConverterApp() {
             </div>
           </div>
 
+          {/* Input Tabs */}
           <Tabs defaultValue="decimal" className="w-full">
-            <TabsList className="grid grid-cols-3 mb-6 w-full">
-              <TabsTrigger value="decimal">Decimal</TabsTrigger>
+            <TabsList className="grid grid-cols-3 mb-6 w-full bg-teal-50">
+              <TabsTrigger value="decimal">Decimal°</TabsTrigger>
               <TabsTrigger value="dms">DMS</TabsTrigger>
               <TabsTrigger value="utm">UTM</TabsTrigger>
             </TabsList>
@@ -195,7 +204,7 @@ export default function CoordinateConverterApp() {
                   placeholder="38.8951"
                   value={decimalDegrees.latitude}
                   onChange={(e) => setDecimalDegrees({ ...decimalDegrees, latitude: e.target.value })}
-                  className="input-fix"
+                  className="h-12 text-base focus-visible:ring-0"
                 />
               </div>
               <div className="space-y-3">
@@ -206,18 +215,22 @@ export default function CoordinateConverterApp() {
                   placeholder="-77.0364"
                   value={decimalDegrees.longitude}
                   onChange={(e) => setDecimalDegrees({ ...decimalDegrees, longitude: e.target.value })}
-                  className="input-fix"
+                  className="h-12 text-base focus-visible:ring-0"
                 />
               </div>
               <div className="flex justify-between">
                 <Button 
                   variant="outline" 
                   onClick={() => resetInputs("decimal")}
+                  className="gap-2 hover:bg-amber-50/20"
                 >
-                  <RotateCcw className="mr-2 h-4 w-4" />
-                  Reset
+                  <RotateCcw className="h-4 w-4" />
+                  Reset Fields
                 </Button>
-                <Button onClick={() => handleConvert("decimal")}>
+                <Button 
+                  onClick={() => handleConvert("decimal")}
+                  className="bg-teal-600 hover:bg-teal-700 px-8"
+                >
                   Convert
                 </Button>
               </div>
@@ -233,14 +246,14 @@ export default function CoordinateConverterApp() {
                     placeholder="Deg"
                     value={dms.latDegrees}
                     onChange={(e) => setDms({ ...dms, latDegrees: e.target.value })}
-                    className="input-fix"
+                    className="h-12 focus-visible:ring-0"
                   />
                   <Input
                     type="number"
                     placeholder="Min"
                     value={dms.latMinutes}
                     onChange={(e) => setDms({ ...dms, latMinutes: e.target.value })}
-                    className="input-fix"
+                    className="h-12 focus-visible:ring-0"
                   />
                   <Input
                     type="number"
@@ -248,18 +261,18 @@ export default function CoordinateConverterApp() {
                     placeholder="Sec"
                     value={dms.latSeconds}
                     onChange={(e) => setDms({ ...dms, latSeconds: e.target.value })}
-                    className="input-fix"
+                    className="h-12 focus-visible:ring-0"
                   />
                   <Select 
                     value={dms.latDirection} 
                     onValueChange={(v) => setDms({ ...dms, latDirection: v })}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="N">N</SelectItem>
-                      <SelectItem value="S">S</SelectItem>
+                      <SelectItem value="N">North</SelectItem>
+                      <SelectItem value="S">South</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -273,14 +286,14 @@ export default function CoordinateConverterApp() {
                     placeholder="Deg"
                     value={dms.longDegrees}
                     onChange={(e) => setDms({ ...dms, longDegrees: e.target.value })}
-                    className="input-fix"
+                    className="h-12 focus-visible:ring-0"
                   />
                   <Input
                     type="number"
                     placeholder="Min"
                     value={dms.longMinutes}
                     onChange={(e) => setDms({ ...dms, longMinutes: e.target.value })}
-                    className="input-fix"
+                    className="h-12 focus-visible:ring-0"
                   />
                   <Input
                     type="number"
@@ -288,18 +301,18 @@ export default function CoordinateConverterApp() {
                     placeholder="Sec"
                     value={dms.longSeconds}
                     onChange={(e) => setDms({ ...dms, longSeconds: e.target.value })}
-                    className="input-fix"
+                    className="h-12 focus-visible:ring-0"
                   />
                   <Select 
                     value={dms.longDirection} 
                     onValueChange={(v) => setDms({ ...dms, longDirection: v })}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="E">E</SelectItem>
-                      <SelectItem value="W">W</SelectItem>
+                      <SelectItem value="E">East</SelectItem>
+                      <SelectItem value="W">West</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -309,11 +322,15 @@ export default function CoordinateConverterApp() {
                 <Button 
                   variant="outline" 
                   onClick={() => resetInputs("dms")}
+                  className="gap-2 hover:bg-amber-50/20"
                 >
-                  <RotateCcw className="mr-2 h-4 w-4" />
-                  Reset
+                  <RotateCcw className="h-4 w-4" />
+                  Reset Fields
                 </Button>
-                <Button onClick={() => handleConvert("dms")}>
+                <Button 
+                  onClick={() => handleConvert("dms")}
+                  className="bg-teal-600 hover:bg-teal-700 px-8"
+                >
                   Convert
                 </Button>
               </div>
@@ -328,7 +345,7 @@ export default function CoordinateConverterApp() {
                   placeholder="500000"
                   value={utm.easting}
                   onChange={(e) => setUtm({ ...utm, easting: e.target.value })}
-                  className="input-fix"
+                  className="h-12 text-base focus-visible:ring-0"
                 />
               </div>
               <div className="space-y-3">
@@ -338,14 +355,14 @@ export default function CoordinateConverterApp() {
                   placeholder="4000000"
                   value={utm.northing}
                   onChange={(e) => setUtm({ ...utm, northing: e.target.value })}
-                  className="input-fix"
+                  className="h-12 text-base focus-visible:ring-0"
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-3">
                   <Label className="text-base">Zone</Label>
                   <Select value={utm.zone} onValueChange={(v) => setUtm({ ...utm, zone: v })}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px]">
@@ -361,7 +378,7 @@ export default function CoordinateConverterApp() {
                 <div className="space-y-3">
                   <Label className="text-base">Hemisphere</Label>
                   <Select value={utm.hemisphere} onValueChange={(v) => setUtm({ ...utm, hemisphere: v })}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -376,11 +393,15 @@ export default function CoordinateConverterApp() {
                 <Button 
                   variant="outline" 
                   onClick={() => resetInputs("utm")}
+                  className="gap-2 hover:bg-amber-50/20"
                 >
-                  <RotateCcw className="mr-2 h-4 w-4" />
-                  Reset
+                  <RotateCcw className="h-4 w-4" />
+                  Reset Fields
                 </Button>
-                <Button onClick={() => handleConvert("utm")}>
+                <Button 
+                  onClick={() => handleConvert("utm")}
+                  className="bg-teal-600 hover:bg-teal-700 px-8"
+                >
                   Convert
                 </Button>
               </div>
@@ -398,25 +419,19 @@ export default function CoordinateConverterApp() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Decimal Degrees:</span>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => copyToClipboard(
-                          `${results.decimal.latitude.toFixed(6)}, ${results.decimal.longitude.toFixed(6)}`,
-                          "decimal"
-                        )}
-                      >
-                        <Copy className="h-4 w-4 mr-2" />
-                        Copy
-                      </Button>
-                      {copyFeedback.visible && copyFeedback.type === "decimal" && (
-                        <span className="text-xs text-green-500">Copied!</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyToClipboard(
+                        `${results.decimal.latitude.toFixed(6)}, ${results.decimal.longitude.toFixed(6)}`
                       )}
-                    </div>
+                    >
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy
+                    </Button>
                   </div>
-                  <div className="bg-gray-100 p-3 rounded">
-                    <code className="font-mono text-sm">
+                  <div className="bg-teal-50/30 p-4 rounded-lg">
+                    <code className="font-mono text-sm break-all">
                       Lat: {results.decimal.latitude.toFixed(6)}
                       <br />
                       Lon: {results.decimal.longitude.toFixed(6)}
@@ -429,25 +444,19 @@ export default function CoordinateConverterApp() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Degrees Minutes Seconds:</span>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => copyToClipboard(
-                          `${results.dms.latDegrees}°${results.dms.latMinutes}'${results.dms.latSeconds.toFixed(3)}"${results.dms.latDirection} ` +
-                          `${results.dms.longDegrees}°${results.dms.longMinutes}'${results.dms.longSeconds.toFixed(3)}"${results.dms.longDirection}`,
-                          "dms"
-                        )}
-                      >
-                        <Copy className="h-4 w-4 mr-2" />
-                        Copy
-                      </Button>
-                      {copyFeedback.visible && copyFeedback.type === "dms" && (
-                        <span className="text-xs text-green-500">Copied!</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyToClipboard(
+                        `${results.dms.latDegrees}°${results.dms.latMinutes}'${results.dms.latSeconds.toFixed(3)}"${results.dms.latDirection} ` +
+                        `${results.dms.longDegrees}°${results.dms.longMinutes}'${results.dms.longSeconds.toFixed(3)}"${results.dms.longDirection}`
                       )}
-                    </div>
+                    >
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy
+                    </Button>
                   </div>
-                  <div className="bg-gray-100 p-3 rounded">
+                  <div className="bg-teal-50/30 p-4 rounded-lg">
                     <code className="font-mono text-sm">
                       {results.dms.latDegrees}°{results.dms.latMinutes}'{results.dms.latSeconds.toFixed(3)}"
                       {results.dms.latDirection}
@@ -463,26 +472,20 @@ export default function CoordinateConverterApp() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">UTM Coordinates:</span>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => copyToClipboard(
-                          `${results.utm.zone}${results.utm.hemisphere} ` +
-                          `${results.utm.easting.toFixed(2)}E ` +
-                          `${results.utm.northing.toFixed(2)}N`,
-                          "utm"
-                        )}
-                      >
-                        <Copy className="h-4 w-4 mr-2" />
-                        Copy
-                      </Button>
-                      {copyFeedback.visible && copyFeedback.type === "utm" && (
-                        <span className="text-xs text-green-500">Copied!</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyToClipboard(
+                        `${results.utm.zone}${results.utm.hemisphere} ` +
+                        `${results.utm.easting.toFixed(2)}E ` +
+                        `${results.utm.northing.toFixed(2)}N`
                       )}
-                    </div>
+                    >
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy
+                    </Button>
                   </div>
-                  <div className="bg-gray-100 p-3 rounded">
+                  <div className="bg-teal-50/30 p-4 rounded-lg">
                     <code className="font-mono text-sm">
                       Zone {results.utm.zone}{results.utm.hemisphere}
                       <br />
@@ -498,7 +501,7 @@ export default function CoordinateConverterApp() {
                 <div className="mt-6">
                   <Button
                     variant="outline"
-                    className="w-full"
+                    className="w-full bg-teal-600/20 hover:bg-teal-700/30"
                     onClick={() => window.open(generateGoogleMapsUrl(
                       results.decimal.latitude,
                       results.decimal.longitude
@@ -514,17 +517,36 @@ export default function CoordinateConverterApp() {
         )}
       </Card>
 
-      {/* Attribution Footer */}
+      {/* Clipboard Feedback */}
+      {copyFeedback && (
+        <div className="fixed bottom-4 right-4 bg-teal-600 text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in">
+          Copied to clipboard!
+        </div>
+      )}
+
+      {/* Professional Attribution Footer */}
       <footer className="mt-12 text-center space-y-4">
-        <div className={`inline-block bg-black/50 text-white px-6 py-3 rounded-2xl transition-opacity duration-500 ${
-          showCredit ? "opacity-100" : "opacity-0"
-        }`}>
-          <div className="text-sm font-medium mb-1">
-            Developed by Yusuf Mohammednur
+        <div className={`inline-block bg-black/50 backdrop-blur-lg text-white px-6 py-3 rounded-2xl 
+          transition-all duration-700 ease-out transform ${
+            showCredit ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+          }`}
+        >
+          <div className="text-sm font-medium text-teal-300 mb-1">
+            Geospatial Engineering Solutions
           </div>
-          <div className="text-xs">
-            Support our cause! Contribute via Telebirr: 0913-373481
+          <div className="text-xs text-amber-100">
+            Developed by <span className="font-semibold text-amber-200">Yusuf Mohammednur</span>
           </div>
+        </div>
+
+        <div className="text-amber-100 text-sm space-y-1">
+          <p>Advanced Coordinate Transformation System</p>
+          <p className="text-xs text-amber-200/90">
+            Support our cause! Contribute via Telebirr: 
+            <span className="font-mono bg-black/25 px-2 py-1 rounded-md ml-1">
+              0913-373481
+            </span>
+          </p>
         </div>
       </footer>
 
@@ -540,19 +562,13 @@ export default function CoordinateConverterApp() {
           animation: gradientFlow 20s ease infinite;
         }
 
-        input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(10px) }
+          to { opacity: 1; transform: translateY(0) }
         }
 
-        input[type="number"] {
-          -moz-appearance: textfield;
-        }
-
-        .input-fix:focus {
-          outline: none;
-          box-shadow: none;
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out;
         }
       `}</style>
     </div>
