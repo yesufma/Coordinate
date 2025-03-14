@@ -329,7 +329,7 @@ export default function CoordinateConverterApp() {
                   className="w-full sm:w-auto gap-2 hover:bg-amber-50/20"
                 >
                   <RotateCcw className="h-4 w-4" />
-                  <span className="text-sm">Reset Fields</span>
+                  <span className="text-sm">Reset </span>
                 </Button>
                 <Button 
                   onClick={() => handleConvert("dms")}
